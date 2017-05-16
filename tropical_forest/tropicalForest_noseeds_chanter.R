@@ -165,18 +165,28 @@ for(df in noseed_trees){
 	with(df, hist(R_Growth - R_GrowthR))
 }
 
+
+
 # Compare the growth through time from each mechanism
 
 pdf('Tropical_forest_growth.pdf', paper='a4', height=8, width=8)
-	par(mfrow=c(3,2), mar=c(3,3,1,1), mgp=c(2,0.8,0))
 	
 	for(pft in names(PFTs)){
 		
+		# data and simulation
 		res <- noseed_trees[[pft]]
-		plot_production(res, main= sprintf('Formind: %s', pft))
+		sim <- growth_simulation(PFTs[[pft]], Dinit=0.001, n_years=max(res$AGE))
+
+		# Look at variable differences
+		par(mfrow=c(4,3), mar=c(3,3,1,1), mgp=c(2,0.8,0), oma=c(0,0,3,0))
+		plot_simulation_overlay(res, sim)
+		mtext(sprintf('%s variable differences', pft), side=3, line=1, outer=TRUE, font=2)
 		
-		sim <- growth_simulation(PFTs[[pft]], Dinit=0.001, n_years=max(res$AGE+1))
-		plot_production(sim, main= sprintf('R: %s', pft))
+		# Compare the production curves
+		par(mfrow=c(2,1), mar=c(3,3,1,1), mgp=c(2,0.8,0))
+		plot_production(res, main= sprintf('Formind production: %s', pft))
+		plot_production(sim, main= sprintf('R production: %s', pft))
+		
 	}
 dev.off()
 

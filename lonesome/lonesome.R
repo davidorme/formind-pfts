@@ -19,7 +19,7 @@ curves <- geometry_curves(settings)
 par(mfrow=c(3,2), mar=c(3,3,1,1), mgp=c(2,0.8,0))
 plot_geometry(curves)
 
-# Comparision to output of lonesome.par, which is supposed to contain a single instance of 
+# Comparision to output of lonesome.par, contains a single instance of 
 # a tree growing with these settings.
 tree <- read.delim('lonesome.res', skip=2)
 # drop data after the tree reaches maximum size
@@ -29,21 +29,27 @@ tree <- tree[1:which.max(tree$H),]
 par(mfrow=c(5,2), mar=c(3,3,1,1), mgp=c(2,0.8,0))
 plot_geometry_overlay(tree, settings)
 
-## PRODUCTION
-production <- growth_simulation(settings, Dinit=0.035, n_years=56)
-production2 <- growth_simulation(settings, Dinit=0.035, n_years=56, truncate_overgrowth=TRUE)
 
+## But the PRODUCTION is very strange, it does seem to match
+## the PB budget being allocated, but nothing goes to respiration
+## Except the first year.
+with(tree, hist(PB - (BInc + R_Growth + R_Main)))
+plot((PB - (BInc + R_Growth + R_Main)) ~ AGE, data=tree)
+
+# Run two simulations using the R code
+production <- growth_simulation(settings, Dinit=0.035, n_years=56)
+production_trunc <- growth_simulation(settings, Dinit=0.035, n_years=56, truncate_overgrowth=TRUE)
 
 pdf('Lonesome_growth.pdf', paper='a4', height=8, width=8)
 	par(mfrow=c(2,2), mar=c(3,3,1,1), mgp=c(2,0.8,0))
 	plot_production(tree, main='FORMIND .res file contents')
 	plot_production(production, ylim=c(-0.1,1.3), main='R (not constrained)')
-	plot_production(production2, main='R (constrained)')
+	plot_production(production_trunc, main='R (constrained)')
 
 	# This one isn't the same because the polynomial increment calculation is off
 	plot(DInc ~ D, data=production, type='l', col='red')
 	lines(DInc ~ D, data=tree, type='l', lwd=3, col='grey')
-	lines(DInc ~ D, data=production2, type='l', col='red', lty=2)
+	lines(DInc ~ D, data=production_trunc, type='l', col='red', lty=2)
 	legend('topright', lty=c(1,1,2), lwd=c(3,1,1), col=c('grey','red','red'), 
 			legend=c('FORMIND .res', 'R (unconstrained)', 'R (constrained)'),
 			bty='n')

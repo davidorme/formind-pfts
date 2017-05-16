@@ -221,16 +221,16 @@ growth_simulation <- function(settings, Dinit=0.01, n_years=200, truncate_overgr
 	# FORMIND outputs, the behaviour is duplicated.
 	
 	# initialise the variable vectors
-	Age <- seq_len(n_years)
-	D <- H <- CD <- CLP <- CA <- LAI <- BT <- PB <- DInc <- numeric(n_years)
+	Age <- 0:n_years
+	D <- H <- CD <- CLP <- CA <- LAI <- BT <- PB <- DInc <- numeric(n_years+1)
 	D[1] <- Dinit
 	
 	# Growth and flag for overgrowth
 	overgrowth <- FALSE
-	BInc <- R_Growth <- R_Main <- R <- numeric(n_years)
+	BInc <- R_Growth <- R_Main <- R <- numeric(n_years+1)
 	
 	# run the simulation.
-	for(yr in Age){
+	for(yr in seq_along(Age)){
 		
 		# fill in the rest of the geometry for this year
 		H[yr] <- D_to_H(D[yr], settings, verbose=FALSE)
@@ -279,7 +279,7 @@ growth_simulation <- function(settings, Dinit=0.01, n_years=200, truncate_overgr
 		}
 		
 		# start diameter for next year
-		if(yr < n_years){
+		if(yr < (n_years+1)){
 			D[yr + 1] <- D[yr] + potDInc
 			DInc[yr + 1] <- potDInc
 			BInc[yr + 1] <- potBInc
@@ -431,40 +431,53 @@ plot_tree <- function(data, age=NULL){
 	})
 }
 
-plot_geometry_overlay <- function(sim, settings){
+plot_geometry_overlay <- function(res, settings){
 	
 	# Takes the simulation data from a formind res file
 	# for a single tree and overplots geometry predictions 
 	# for given settings using the R functions
 	
-	plot(H ~ D, data=sim, type='l', lwd=3, col='grey')
-	sim$HR <- D_to_H(sim$D, settings) 
-	lines(HR ~ D, data=sim, col='red')
-	deltaH <- with(sim, HR - H)
+	plot(H ~ D, data=res, type='l', lwd=3, col='grey')
+	res$HR <- D_to_H(res$D, settings) 
+	lines(HR ~ D, data=res, col='red')
+	deltaH <- with(res, HR - H)
 	plot(density(deltaH))
 	
-	plot(CLP ~ H, data=sim, type='l', lwd=3, col='grey')
-	sim$CLPR <- H_to_Clp(sim$H, settings) 
-	lines(CLPR ~ H, data=sim, col='red')
-	deltaClp <- with(sim, CLPR - CLP)
+	plot(CLP ~ H, data=res, type='l', lwd=3, col='grey')
+	res$CLPR <- H_to_Clp(res$H, settings) 
+	lines(CLPR ~ H, data=res, col='red')
+	deltaClp <- with(res, CLPR - CLP)
 	plot(density(deltaClp))
 	
-	plot(CD ~ D, data=sim, type='l', lwd=3, col='grey')
-	sim$CDR <- D_to_Cd(sim$D, settings)
-	lines(CDR ~ D, data=sim, col='red')
-	deltaCd <- with(sim, CDR - CD)
+	plot(CD ~ D, data=res, type='l', lwd=3, col='grey')
+	res$CDR <- D_to_Cd(res$D, settings)
+	lines(CDR ~ D, data=res, col='red')
+	deltaCd <- with(res, CDR - CD)
 	plot(density(deltaCd))
 
-	plot(LAI ~ D, data=sim, type='l', lwd=3, col='grey')
-	sim$LAIR <- D_to_LAI(sim$D, settings)
-	lines(LAIR ~ D, data=sim, col='red')
-	deltaLAI <- with(sim, LAIR - LAI)
+	plot(LAI ~ D, data=res, type='l', lwd=3, col='grey')
+	res$LAIR <- D_to_LAI(res$D, settings)
+	lines(LAIR ~ D, data=res, col='red')
+	deltaLAI <- with(res, LAIR - LAI)
 	plot(density(deltaLAI))
 
-	plot(BT ~ D, data=sim, type='l', lwd=3, col='grey')
-	sim$BTR <- Geom_to_B(sim$D, sim$H, settings)
-	lines(BTR ~ D, data=sim, col='red')
-	deltaBT <- with(sim, BTR - BT)
+	plot(BT ~ D, data=res, type='l', lwd=3, col='grey')
+	res$BTR <- Geom_to_B(res$D, res$H, settings)
+	lines(BTR ~ D, data=res, col='red')
+	deltaBT <- with(res, BTR - BT)
 	plot(density(deltaBT))
 
+}
+
+plot_simulation_overlay <- function(res, sim, vars=c('D', 'H', 'CD', 'CLP', 'BT' ,
+									'LAI', 'PB', 'DInc', 'BInc', 'R_Growth', 'R_Main'), ...){
+
+	# Takes a res file and a simulation data frame run over
+	# the same time frame and plots the differences between
+	# the variables by Age to show mismatch
+	
+	for(v in vars){
+		plot((res[[v]] - sim[[v]]) ~ res$AGE, type='l', main=v, ylab=v, xlab='Age', ...)
+	}	
+	
 }
