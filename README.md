@@ -11,7 +11,7 @@ This uses a modified version of the tropical forest parameterisation provided wi
 The R file `tropicalForest_noseeds_chanter.R` goes through a process of:
 
 1. Matching the geometry of the PFTs from the `.res` file to the functions in R.
-2. Checking the growth mechanism from the FORMIND `.res` file (that $D_{n+1} = D_{n} + DInc{n+1}$ etc.)
+2. Checking the growth mechanism from the FORMIND `.res` file (that $$D_{n+1} = D_{n} + DInc{n+1}$$ etc.)
 3. Simulating the growth using R and comparing that to the `.res` file. The PDF in the folder shows the differences between the variables calculated in FORMIND and through R are very similar and that the productivity curves through time using the two methods are pretty much in agreement.
 
 There are some unfixed issues - a small but systematic error in the PB calculation and the Chanter model for the intermediate PFT doesn't seem to behave in the same way, although the parameters are the same.
