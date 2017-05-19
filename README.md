@@ -2,7 +2,7 @@
 
 This repo contains predominantly R code duplicating the FORMIND parameterisation of plant functional types. The main point is to provide quick tools to visualise a PFT with given parameters, including the geometry of the PFT and the growth of the PFT under simplified conditions (constant illumination, no water or temperature constraint).
 
-The R code to generate the PFT geometry and growth is in `FORMIND_tree_models.R`. There are two example folders attempting to match the implementation in R to FORMIND outputs. 
+The R code to generate the PFT geometry and growth is in `FORMIND_tree_models.R`. There are three example folders attempting to match the implementation in R to FORMIND outputs and exploring the growth behaviour.
 
 #### Tropical Forest
 
@@ -64,8 +64,8 @@ is replaced with:
 		0	0	0
 	end
 
-So, the three initial saplings (one of each PFT) in the `.pin` file are now trying to grow ridiculously quickly, but with no more photosynthetic biomass available. Looking the production in the `.res` file, all three now show the same behaviour as Lonesome:
+So, the three initial saplings (one of each PFT) in the `.pin` file are now trying to grow ridiculously quickly, but with no more photosynthetic biomass available as the geometry and illumination are unchanged. Looking the production in the `.res` file, all three now show the same behaviour as Lonesome:
 
-1. Truncation of the achieved `DInc` curves from the model - that's expected as the trees simply can't grow this much. 
+1. Truncation of the achieved `DInc` curves from the model - that's expected as the trees simply can't grow this much, but I'd expect them to be even more truncated, to allow for maintenance respiration.
 2. All achieve `Dmax` much earlier. This could make sense if there was 'spare' PB, that growth is now allowed to exploit.
 3. All show the same production behaviour - maintenance respiration is _zero_ until growth gets to the point where `DInc` is achievable within the PB budget.
