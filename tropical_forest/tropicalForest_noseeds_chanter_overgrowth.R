@@ -26,7 +26,7 @@ chanter_params = list('pioneer'= list(dmax=max(noseed_trees[['pioneer']]$D), alp
 					  'intermed'= list(dmax=max(noseed_trees[['intermed']]$D), alpha_0=0.4, alpha_1=1.5),
 					  'climax'= list(dmax=max(noseed_trees[['climax']]$D), alpha_0=0.1, alpha_1=1.1))
 
-#pdf('Tropical_forest_growth_overgrowth.pdf', paper='a4', height=6, width=9)
+pdf('Tropical_forest_growth_overgrowth.pdf', paper='a4', height=11, width=8)
 	
 
 	par(mfrow=c(3,2), mar=c(3,3,1,1), mgp=c(2,0.8,0))
@@ -40,11 +40,11 @@ chanter_params = list('pioneer'= list(dmax=max(noseed_trees[['pioneer']]$D), alp
 		D <- seq(0, pars$dmax, length=101)
 		DInc <- with(pars, alpha_0 * D * ( 1 - D/dmax) * exp(-alpha_1 * D))
 		plot(DInc ~ D, type='l')
-		lines(DInc ~ D, data=res, col='red')
+		lines(DInc[-1] ~ D[-nrow(res)], data=res, col='red')
 		
 		# plot the production curves
 		plot_production(res, main= sprintf('Formind production: %s', pft))
 		
 	}
-#dev.off()
+dev.off()
 

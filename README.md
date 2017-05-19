@@ -29,3 +29,43 @@ I set this up to test a single tree and then got some odd behaviour in the `.res
 3. I looked at the relationship between `D` and `DInc`, in the `.res` file to see how growth was proceeding and there is a clear truncation of the expected polynomial shape until the tree gets $D=0.6$ at about 25 years.
 
 4. I can reproduce this behaviour pretty closely in R by finding a DInc value that gives growth costs (BInc + R_Growth) that equal the available PB, leaving zero maintenance respiration. If I run this constrained simulation then the production curves match what I see in FORMIND and the simualted `DInc` also matches closely to the values reported in the `.res` file.
+
+#### Tropical Forest overgrowth
+
+Without trying to do any simulation in R, I've also created a version of the tropical forest with a hugely overclocked DInc function. The setup is identical to  `tropicalForest_noseeds_chanter.par` except:
+
+	array	N_Par.Pro_dbh_growth
+		\u -
+		\r -999999:999999
+		\d Parameters of the potential growth function of stem diameter per year (group-specific)
+		\i 0
+		typeOfArray	float
+		dimension	4	3
+	data
+		0.42	0.074	0.0215
+		2.1	1.5	1.1
+		0	0	0
+		0	0	0
+	end
+
+is replaced with:
+
+	array	N_Par.Pro_dbh_growth
+		\u -
+		\r -999999:999999
+		\d Parameters of the potential growth function of stem diameter per year (group-specific)
+		\i 0
+		typeOfArray	float
+		dimension	4	3
+	data
+		1.0	0.4	0.085
+		2.1	1.5	1.1
+		0	0	0
+		0	0	0
+	end
+
+So, the three initial saplings (one of each PFT) in the `.pin` file are now trying to grow ridiculously quickly, but with no more photosynthetic biomass available. Looking the production in the `.res` file, all three now show the same behaviour as Lonesome:
+
+1. Truncation of the achieved `DInc` curves from the model - that's expected as the trees simply can't grow this much. 
+2. All achieve `Dmax` much earlier. This could make sense if there was 'spare' PB, that growth is now allowed to exploit.
+3. All show the same production behaviour - maintenance respiration is _zero_ until growth gets to the point where `DInc` is achievable within the PB budget.
