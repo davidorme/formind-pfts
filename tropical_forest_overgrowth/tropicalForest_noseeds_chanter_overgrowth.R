@@ -41,6 +41,8 @@ pdf('Tropical_forest_growth_overgrowth.pdf', paper='a4', height=11, width=8)
 		DInc <- with(pars, alpha_0 * D * ( 1 - D/dmax) * exp(-alpha_1 * D))
 		plot(DInc ~ D, type='l')
 		lines(DInc[-1] ~ D[-nrow(res)], data=res, col='red')
+		legend('topright', lty=1, col=c('black','red'), bty='n', 
+				legend=c('DInc model','DInc acheived'))
 		
 		# plot the production curves
 		plot_production(res, main= sprintf('Formind production: %s', pft))
