@@ -1,0 +1,666 @@
+﻿comment =============================================================================
+comment
+comment		Parametrization for general tropical forest with 3 PFTs
+comment		study site: Amazon, lowland tropical forest
+comment		contact: Franziska Taubert, Rico Fischer
+comment		references: unpublished
+comment		creation date: 13.10.2014 		
+comment
+comment =============================================================================
+
+comment =============================================================================
+comment -------------------    Simulation Information	-----------------------------
+comment =============================================================================
+
+string	ModelPath	"../bin/formind2.2"
+	\d Please remove!
+	\i 0
+
+float	TimeEnd		2000.0
+	\u year
+	\d Ending time of the simulation
+	\i 1
+
+float	TimeStep	1.0
+	\u year
+	\d Time step of the simulation
+	\i 1
+
+int	RandomInit	0
+	\d Initializer for the random generator. Only important if N_Par.random_seed is false.
+	\i 1
+
+
+comment =============================================================================
+comment ----------------       Technical Details	-----------------------------
+comment =============================================================================
+
+float   Switch.Schwelle 0.0
+    	\u m
+    	\r 0.0:1.5
+    	\d Threshold for the special result-files with the ending *.TH
+		\i 1
+		
+int	Switch.Ha      1
+    	\u sqrt(ha)
+    	\r 1:7
+    	\d Square root of the number of hectares which should be simulated
+		\i 1
+		
+string	PinFileNameX    "singleton_1ha_3pft.pin"
+    	\d Name of PIN-file for the initial forest 
+		\d has to be in the same folder as the par file
+		\i 1 
+
+		
+comment =============================================================================
+comment ----------------       List of output files	    -----------------------------
+comment =============================================================================	
+
+int 	myResultFileSwitch.ats		0
+int 	myResultFileSwitch.ba		1
+int 	myResultFileSwitch.ba_th	0
+int 	myResultFileSwitch.bmpl		0
+int 	myResultFileSwitch.bt		1
+int 	myResultFileSwitch.bt_th	0
+int 	myResultFileSwitch.cflux	1
+int 	myResultFileSwitch.cfluxplot	1
+int 	myResultFileSwitch.dia		1
+int 	myResultFileSwitch.div		0
+int 	myResultFileSwitch.div_th	0
+int 	myResultFileSwitch.env		1
+int 	myResultFileSwitch.fal		0
+int 	myResultFileSwitch.fire		1
+int 	myResultFileSwitch.in		0
+int 	myResultFileSwitch.lai		1
+int 	myResultFileSwitch.lai_mean	0
+int 	myResultFileSwitch.lai_plot	0
+int	myResultFileSwitch.lai_plot_heightlayer	0
+int 	myResultFileSwitch.log		1
+int 	myResultFileSwitch.log_bad	0
+int 	myResultFileSwitch.log_nd	0
+int 	myResultFileSwitch.logg_end	0
+int 	myResultFileSwitch.mort		1
+int 	myResultFileSwitch.n		1
+int 	myResultFileSwitch.n_th		0
+int 	myResultFileSwitch.pin		0
+int 	myResultFileSwitch.plot		1
+int 	myResultFileSwitch.prod		1
+int 	myResultFileSwitch.res		1
+int 	myResultFileSwitch.seed		0
+int 	myResultFileSwitch.seedling	0
+int 	myResultFileSwitch.stree	0
+int 	myResultFileSwitch.sv		0
+int 	myResultFileSwitch.sv_th	0
+int 	myResultFileSwitch.svs		0
+int 	myResultFileSwitch.water	1
+int 	myResultFileSwitch.water_plot	1
+
+int	myResultFileSwitch.save_parameter_files	0
+int	myResultFileSwitch.result_time_stamp	0
+
+	
+
+comment =============================================================================
+comment ----------------      General          --------------------------------------
+comment =============================================================================
+
+int	N_Par.Div_MAXGRP	3
+	\u -
+	\r 1:22
+	\d Number of simulated species groups
+	\i 1
+
+comment =============================================================================
+comment ----------------      Flags            --------------------------------------
+comment =============================================================================
+
+int	N_Par.random_seed_ON	0
+	\u -
+	\r 0:1
+	\d Flag for activating stochasticity (0: reproducible / 1: NOT reproducible)
+	\i 1
+	
+int	N_Par.Globalseeds	0
+	\u -
+	\r 0:1
+	\d Flag for using global seed ingrowth from outside a hectare
+	\i 1
+
+int	N_Par.Densityreg	1
+ 	\u -
+ 	\r 0:1
+ 	\d Flag for activating the density regulation of establishing seedlings
+	\i 0 
+	
+int	N_Par.Spacelimitation	1
+	\u -
+	\r 0:1
+	\d Flag for activating self-thinning in crowded stand
+	\i 1 
+
+int	Log.DoIt    0
+	\r 0:1	
+	\d Logging yes/no
+	\i 1 
+	
+int	N_Par.Fire	0
+	\u -
+	\r 0:1
+	\d Flag for activating the fire submodule
+	\i 1 
+
+int	N_Par.Flag_BackgroundMortality	0
+	\u -
+	\r 0:1
+	\d Flag for activating background mortality	
+	\i 1  
+
+int	N_Par.Flag_DbhMortality	0
+	\u -
+	\r 0:1
+	\d Flag for activating dbh-dependent mortality	
+	\i 1
+	
+int	N_Par.Flag_DincMortality	0
+	\u -
+	\r 0:1
+	\d Flag for activating background mortality	
+	\i 1 
+	
+comment =============================================================================
+comment ----------------      Global seed ingrowth    -------------------------------
+comment =============================================================================
+
+array	N_Par.Est_NS_3
+	\u per hectare and year
+	\r 0:999999
+	\d Number of seeds reaching a hectare from outside (group-specific)
+	\i 1 
+	typeOfArray	int
+	dimension	3
+data
+	500	30	15
+end
+
+comment =============================================================================
+comment ----------------   Establishment of seedlings  ------------------------------
+comment =============================================================================
+
+array	N_Par.Est_ISeed_3
+	\u -
+	\r 0:1
+	\d Minimum light intensity (relative to full light above canopy) required for establishment of seeds (group-specific)
+	\i 1
+	typeOfArray	float
+	dimension	3
+data
+	0.1	0.07	0.01
+end
+
+float	N_Par.Est_DS	0.01
+	\u m
+	\r 0.001:HMax
+	\d Stem diameter of established seedlings if value <1  else: height of established seedlings 
+	\i 1
+	
+array	N_Par.Max_Den
+	\u per patch and species
+	\r 0:999999
+	\d Maximum number of established seedlings for each species group
+	\i 1  
+data
+	0.0	0.0	0.0
+end
+
+comment =============================================================================
+comment ----------------       Mortality         ------------------------------------
+comment =============================================================================
+
+array	N_Par.Mort_FUNCTION_2
+	\u -
+	\r 0:2
+	\d Setting the use of functional relationships for mortality 
+	\d mortality dependent on the stem diameter f(d) and 
+	\d mortality dependent on the increment of the stem diameter f(dinc)
+	\i 1
+	typeOfArray	int
+	dimension	2
+data
+	1	0
+end
+comment f(d)   : 0(a0+a1*d+a2*SQR(d)) 1(a0-a0/a1*d for d<=a1) 2(a0*pow(d, a1)+a2*pow(d, 2)) 3(a0*exp(-a1*d))
+comment f(dinc): 0(b0+b1*dinc+b2*SQR(dinc)) 1(b0*exp(b1*dinc)) 2(0.02+b0*dinc+b1*pow(dinc, 2)+b2*pow(dinc, 3)) 3(dinc > 0: mort=b1, dinc <=0: mort=b0)
+
+array	N_Par.Mort_mean_19
+	\u per year
+	\r 0:1
+	\d Background mortality rate (group-specific)
+	\i 1 
+	typeOfArray	float
+	dimension	3
+data
+	0.05	0.01	0.005
+end
+
+array	N_Par.Mort_Dia_31
+	\u per year
+	\r 0:999999
+	\d Parameters of the functional relationship used to calculate the added mortality rate dependent on the stem diameter
+	\i 1
+	typeOfArray	float
+	dimension	3	3
+data
+	0.0	0.0	0.0
+	0.1	0.1	0.1
+	0.0	0.0	0.0
+end
+
+array	N_Par.Mort_Dinc_31
+	\u per year
+	\r -999999:999999
+	\d Parameters of the functional relationship used to calculate the added mortality rate dependent on the increment of the stem diameter
+	\i 1 
+	typeOfArray	float
+	dimension	3	1
+data
+	0.0
+	0.0
+	0.0
+end
+
+float	N_Par.Mort_FallP	0.4
+	\u -
+	\r 0:1
+	\d Probability of dying trees to fall and damage other trees
+	\i 1 
+
+comment =============================================================================
+comment ----------------       Geometry                       -----------------------
+comment =============================================================================
+
+array	N_Par.Geo_FUNCTION_7
+	\u -
+	\r 0:5
+	\d Setting the use of functional relationships for geometry calculations of a single tree 
+	\d Height - Stem diameter; remove; Crown diameter - Stem diameter; Form factor - Stem diameter; 
+	\d Crown length factor-Height; Stem biomass per total tree aboveground biomass; Maximum size; 
+	\d Tree biomass - Stem diameter; LAI - Stem diameter
+	\i 0  
+	typeOfArray	int
+	dimension	9
+data
+	2	0	0	1	2	1	0	0	0
+end
+comment Height-Stem diameter-function				: 0(h=h0+h1*d+h2*(d^2)) 1(h=d/(1/h0+d/h1)) 2(h=h0*(d^h1))
+comment XX : unused
+comment CrownDiameter-Stem diameter-function			: 0(cd=cd0*d) 1(cd=cd0*d+cd1*(d^2)) 2(cd=d/(1/cd0+d/cd1)) 3(cd=cd0*d+cd1*(d^2)+cd2*(d^3)) 4(cd=cd0+cd1*exp(-cd2*d)) 5(cd=cd0*d+cd1*exp(-cd2*d)) 6(cd=cd0*d+cd1) 7(cd=cd0*d/(1+cd0*cd1*d)) 8(cd=cd0*(d^cd1)-cd2)
+comment Form factor-Stem diameter-function			: 0(f=f0*exp(f1*(d^f2)))  1(f=f0*(d^f1))
+comment Crown length factor-Height-function			: 0(clp=-c0*c1*h/(c0*h+c1)+c2) 1(clp=c0+c1*h+c2*(h^2)) 2(clp=c0)
+comment Fraction stem biomass of total tree biomass		: 0(tr=t0+t1*(HoutofDFunc->Calculate(1.20, HGRP_BIG))-->Please remove!) 1(tr=t0)
+comment Maximum size of a tree					: 0(maximum height) 1(maximum stem diameter)
+comment Tree aboveground biomass-Stem diameter-function		: 0(b=(d^2)*h*(PI/4.0)*f*(rho/tr)) 1(b=b1*(d^b2)) 2(b=exp(b1*(log(d*100)-b3)*(2*b2+(log(d*100)-b3))/(b2+(log(d*100)-b3))))
+comment LAI							: 0(lai=l0*(d^l1)) 1(lai=l0+l1*(d/100)) 2(lai=(l0  + l1*d + l2*SQR(d))/ac) 3(lai=(l0 * d + l1 * SQR(d) + l2 * pow(d,3))/ac)
+
+array	N_Par.Geo_HMmean_5
+	\u m
+	\r 0:999999
+	\d Maximum size (height or stem diameter) of a tree (group-specific)
+	\i 1 
+	typeOfArray	float
+	dimension	3
+data
+	20	30	40
+end
+
+array	N_Par.Geo_HD_39
+	\u -
+	\r 0:999999
+	\d Parameter of Height-Stem diameter-function of a single tree (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3	3
+data
+	23.87	30.06	32.96
+	0.49	0.54	0.56
+	0.0	0.0	0.0
+end
+
+array	N_Par.Geo_LAIT_21
+	\u -
+	\r 0:999999
+	\d Parameter of LAI-Stem diameter-function of a single tree (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3	3
+data
+	2.0	2.0	2.0
+	0.0	0.0	0.0
+	0.0	0.0	0.0
+end
+
+array	N_Par.Geo_CD_31
+	\u -
+	\r 0:999999
+	\d Parameters of Crown diameter-Stem diameter-function of a single tree (group-specific)
+	\i 0
+	typeOfArray	float
+	dimension	3	3
+data
+	15.0	15.0	15.0
+	0.0	0.0	0.0
+	0.0	0.0	0.0
+end
+
+array	N_Par.Geo_FD_31
+	\u divers
+	\r -1:1
+	\d Parameters of Form factor-Stem diameter-function of a single tree (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3	3
+data
+	0.22	0.22	0.22
+	-0.22	-0.22	-0.22
+	0.0	0.0	0.0
+end
+
+array	N_Par.Geo_CLFH_31
+	\u -
+	\r 0:999999
+	\d Parameters of Crown length factor-Height-function of a single tree (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3	3
+data
+	0.25	0.25	0.25
+	0.0	0.0	0.0
+	0.0	0.0	0.0
+end
+
+array	N_Par.Geo_TR_21
+	\u -
+	\r 0:1
+	\d Fraction of stem biomass to total biomass (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	2	3
+data
+	0.7	0.7	0.7
+	0.0	0.0	0.0
+end
+
+
+comment =============================================================================
+comment ----------------            Production                   --------------------
+comment =============================================================================
+
+array	N_Par.Pro_Pmax_3
+	\u mikromol(CO_2)/(m^2*s)
+	\r 0:999999
+	\d Maximum leaf photosynthesis (group-specific)
+	\i 1 
+	typeOfArray	float
+	dimension	3
+data
+	15.0	7.0	4.0
+end
+
+array	N_Par.Pro_Alpha_3
+	\u mikromol(CO_2)/mikromol(photons)
+	\r 0:999999
+	\d Slope of light response curve (group-specific)
+	\i 0
+	typeOfArray	float
+	dimension	3
+data
+	0.15	0.25	0.35
+end
+
+array	N_Par.Div_K
+	\u -
+	\r 0:1
+	\d Light extinction coefficient of leaves (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3
+data
+	0.6	0.6	0.6
+end
+
+float	N_Par.Pro_M	0.1
+	\u -
+	\r 0:1
+	\d Transmission coefficient of leaves
+	\i 0 
+
+float	N_Par.Pro_GLoss	0.2
+	\u -
+	\r 0:1
+	\d Fraction of gross productivity attributed to respiratory costs for structural growth
+	\i 0 
+
+array	N_Par.Pro_Rho_3
+	\u t(odm)/m^3
+	\r 0:999999
+	\d Wood density (group-specific)
+	\i 1 
+	typeOfArray	float
+	dimension	3
+data
+	0.4	0.6	0.8
+end
+	
+string	N_Par.Growth_Function_Switch	"chanter"
+	\u -
+	\r "polynom", "weibull", "richards", "chanter", "chanter_maxPos"
+	\d Setting of function used for calculating the potential increment of stem diameter
+	\i 0 
+comment "polynom"			: N_Par.Pro_dbh_growth_max, N_Par.Pro_dbh_growth_maxpoint, N_Par.Pro_dbh_growth_start, N_Par.Pro_dbh_growth_end have to be set
+comment "chanter_maxPos"		: N_Par.Pro_dbh_growth_maxpoint, N_Par.Pro_dbh_growth_max have to be set
+comment "chanter"			: N_Par.Pro_dbh_growth has to be set 
+comment "weibull"			: N_Par.Pro_dbh_growth has to be set 
+comment "richards"			: N_Par.Pro_dbh_growth has to be set
+
+comment DO - these are set to broadly mimic the peak height and location of the original polynomial parameterisation
+
+array	N_Par.Pro_dbh_growth
+	\u -
+	\r -999999:999999
+	\d Parameters of the potential growth function of stem diameter per year (group-specific)
+	\i 0
+	typeOfArray	float
+	dimension	4	3
+data
+	1.0	0.4	0.085
+	2.1	1.5	1.1
+	0	0	0
+	0	0	0
+end
+
+array	N_Par.Pro_dbh_growth_max
+	\u m
+	\r 0:100
+	\d Maximum yearly increment of stem diameter (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3
+data
+	0.040	0.010	0.004
+end
+
+array	N_Par.Pro_dbh_growth_maxpoint
+	\u -
+	\r 0:1
+	\d Fraction of maximum stem diameter where a tree reaches its maximum increment of stem diameter (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3
+data
+	0.333333	0.333333	0.333333
+end
+
+array	N_Par.Pro_dbh_growth_start
+	\u -
+	\r 0:1
+	\d Realized increment of stem diameter for smallest tree relative to the maximum increment (group-specific)
+	\i 0  
+	typeOfArray	float
+	dimension	3
+data
+	0.4		0.4		0.4
+end
+
+array	N_Par.Pro_dbh_growth_end
+	\u -
+	\r 0:1
+	\d Realized increment of stem diameter for biggest tree relative to the maximum increment (group-specific)
+	\i 0 
+	typeOfArray	float
+	dimension	3
+data
+	0.1		0.1		0.1
+end
+
+array	N_Par.Pro_MLoss_33
+	\u -
+	\r 0:1
+	\d Maintainance losses (maintainance respiration & organ renewal & root growth) for different grp
+	\i 0 
+	typeOfArray	float
+	dimension	3 3
+data
+	0.00	0.00	0.00
+	0.00	0.00	0.00
+	0.00	0.00	0.00
+end
+
+
+comment =============================================================================
+comment ----------------      Carbon Module    --------------------------------------
+comment =============================================================================
+
+float N_Par.Cflux_aet 1350
+	\u mm per year
+	\r 0:999999
+	\d Mean actual evapotranspiration (AET)	
+	\i 0 
+
+	
+comment =============================================================================
+comment ----------------      Fire Module      --------------------------------------
+comment =============================================================================
+
+float	N_Par.Fire_Lambda	4
+	\u year
+	\r 1:999999
+	\d Mean time between two occurring fire events
+	\i 1 
+	
+float	N_Par.Fire_Beta		0.20
+	\u percent
+	\r 0:1
+	\d Mean fire size (as relative area of total simulation area)
+	\i 1
+	
+float	N_Par.Fire_Sev		0.55
+	\u -
+	\r 0:1
+	\d Severity of a fire event (0.1 = low; 1.0 = strong)
+	\i 0 
+
+array	N_Par.Fire_Tolerance
+	\u -
+	\r 1:4
+	\d Fire tolerance = probability for death (1: no tolerance ... 4: tolerant against fire) (group-specific)
+	\i 1 
+	typeOfArray	int
+	dimension	3
+data
+	1	2	4	
+end
+
+
+comment =============================================================================
+comment ----------------       Simple Climate     -----------------------------------
+comment =============================================================================
+	
+array	N_Par.Env_IS_2
+	\u mikromol(photons)/(m^2*s)
+	\r 0:999999
+	\d Mean yearly light intensity (PAR) above canopy during day-length 
+	\i 0 
+	typeOfArray	float
+	dimension	2
+data
+	700.00	700.00
+end
+	
+array	N_Par.Env_DayL_2
+	\u hour
+	\r 0:24
+	\d Length of daily photosynthetic active period, i.e. day-length
+	\i 0 
+	typeOfArray	float
+	dimension	2
+data
+	12.0	12.0
+end
+array	N_Par.Env_SeaL_2
+	\u -
+	\r 0:1
+	\d Relative length of wet and dry season 
+	\i 0 
+	typeOfArray	float
+	dimension	2
+data
+	1.0	0.0
+end
+
+	
+comment =============================================================================
+comment ----------------      Logging Module      --------------------------------------
+comment =============================================================================
+
+	
+float   Log.Time    50.0
+    \u year
+	\r 0:999999
+    \d Year for first logging operation
+	\i 1 
+
+float   Log.Diameter    0.5
+    	\u m
+    	\r 0.0:1.5
+    	\d Cutting threshold
+		\i 1  
+	
+float	Log.Cycle   40.0
+    \u year
+	\r 0:999999
+    \d Logging cycle
+	\i 1  
+	
+array   Log.Dam1
+    \u -
+    \r 0:1 
+    \d Damage for all trees after logging event in corresponding DamDia class 
+	\i 1      
+	typeOfArray float
+    dimension   4
+data
+    0.20    0.25    0.30    0.40
+end
+comment	conventionell: 0.40    0.50    0.60    0.70
+comment	reduced-impact: 0.20    0.25    0.30    0.40
+
+array   Log.DamDia
+    	\u m
+    	\r 0:1.5
+    	\d upper thresholds of diameter classes for logging damages
+		\i 1  
+	typeOfArray float
+    	dimension   4
+data
+    0.20   0.35   0.50	2.5
+end
